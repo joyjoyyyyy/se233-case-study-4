@@ -13,26 +13,38 @@ public class DrawingLoop implements Runnable{
         interval = 1000.0f / frameRate;
         running = true;
     }
-    private void checkDrawCollisions(Characters character) {
+    private void checkDrawCollisions(Characters character, Boy boy) {
         character.checkReachGameWall();
         character.checkReachHighest();
         character.checkReachFloor();
+
+        boy.checkReachGameWall();
+        boy.checkReachHighest();
+        boy.checkReachFloor();
     }
-    private void paint(Characters character) {
+    private void paint(Characters character, Boy boy) {
         character.repaint();
+        boy.repaint();
     }
     @Override
     public void run() {
         while (running) {
             float time = System.currentTimeMillis();
-            checkDrawCollisions(platform.getCharacter());
-            paint(platform.getCharacter());
+            checkDrawCollisions(platform.getCharacter(), platform.getBoy());
+            paint(platform.getCharacter(), platform.getBoy());
             time = System.currentTimeMillis() - time;
-            if(time < interval) {
+
+            if (time < interval) {
                 try {
                     Thread.sleep((long) (interval - time));
                 } catch (InterruptedException e) {
-
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    Thread.sleep((long) (interval - (interval % time)));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
